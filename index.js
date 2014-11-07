@@ -75,7 +75,7 @@ var spiStub = {
         cb(null, this.buf);
     }, 
     transfer: function(writebuf, readcount, cb) {
-        debug('[PI-SPI] read ' + readcount);
+        debug('[PI-SPI] transfer ' + writebuf + ' (' + readcount + ')');
         cb(null, writebuf.slice(0,readcount));
     },
     close: function() {
