@@ -1,4 +1,5 @@
 var fs = require('fs'),
+    debug = require('debug')('pi-spi'),
     _spi = require("./build/Release/spi_binding");
 
 exports.mode = {
@@ -11,8 +12,8 @@ exports.order = {
     LSB_FIRST: 1
 };
 
-exports.initialize = function (dev) {
-    
+exports.initialize = function (dev, stub) {
+    if (stub) return spiStub;
     var spi = {},
         _fd = fs.openSync(dev, 'r+'),
         _speed = 4e6,
@@ -53,4 +54,32 @@ exports.initialize = function (dev) {
     return spi;
 };
 
+var spiStub = {
+    buf: null,
+    clockSpeed: function(speed) {
+        debug('[PI-SPI] clock speed ' + speed);
+    },
+    dataMode: function(mode) {
+        debug('[PI-SPI] mode ' + mode);
+    },
+    bitOrder: function(order) {
+        debug('[PI-SPI] bit order ' + order);
+    },
+    write: function(buf, cb) {
+        debug('[PI-SPI] write ' + buf);
+        this.buf = buf;
+        cb();
+    },
+    read: function(readcount, cb) {
+        debug('[PI-SPI] read ' + readcount);
+        cb(null, this.buf);
+    }, 
+    transfer: function(writebuf, readcount, cb) {
+        debug('[PI-SPI] read ' + readcount);
+        cb(null, writebuf.slice(0,readcount));
+    },
+    close: function() {
+        debug('[PI-SPI] close ');
+    }
+}
 
