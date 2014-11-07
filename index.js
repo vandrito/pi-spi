@@ -66,7 +66,7 @@ var spiStub = {
         debug('[PI-SPI] bit order ' + order);
     },
     write: function(buf, cb) {
-        debug('[PI-SPI] write ' + buf);
+        debug('[PI-SPI] write ', buf);
         this.buf = buf;
         cb();
     },
@@ -75,7 +75,7 @@ var spiStub = {
         cb(null, this.buf);
     }, 
     transfer: function(writebuf, readcount, cb) {
-        debug('[PI-SPI] transfer ' + writebuf + ' (' + readcount + ')');
+        debug('[PI-SPI] transfer (size = ' + readcount + ')', writebuf);
         cb(null, writebuf.slice(0,readcount));
     },
     close: function() {
