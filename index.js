@@ -34,18 +34,18 @@ exports.initialize = function (dev, stub) {
     };
     
     
-    function _transfer(w,r,cb) {
-        _spi.transfer(_fd, _speed, _mode, _order, w, r, cb);
+    function _transfer(w,r) {
+        _spi.transfer(_fd, _speed, _mode, _order, w, r);
     }
     
-    spi.write = function (writebuf, cb) {
-        _transfer(writebuf, 0, cb);
+    spi.write = function (writebuf) {
+        _transfer(writebuf, 0);
     };
-    spi.read = function (readcount, cb) {
-        _transfer(null, readcount, cb);
+    spi.read = function (readcount) {
+        _transfer(null, readcount);
     };
-    spi.transfer = function (writebuf, readcount, cb) {
-        _transfer(writebuf, readcount, cb);
+    spi.transfer = function (writebuf, readcount) {
+        _transfer(writebuf, readcount);
     };
     spi.close = function () {
         fs.close( _fd );
