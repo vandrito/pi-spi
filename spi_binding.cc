@@ -114,7 +114,9 @@ Handle<Value> Transfer(const Arguments& args) {
         Handle<Value> v[] = {b->handle_, Integer::New(baton->readcount), Integer::New(0)};
         d = bufferConstructor->NewInstance(3, v);
     } else {
-        d = Local<Value>::New(Null());
+        ThrowException(Exception::TypeError(String::New("Empty buffer or error")));
+        delete[] baton;
+        return scope.Close(Undefined());
     }
     
     delete[] baton;
