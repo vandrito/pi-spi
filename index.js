@@ -26,14 +26,19 @@ exports.initialize = function (dev, stub) {
     };
     spi.dataMode = function (mode) {
         if (arguments.length < 1) return _mode;
-        else _mode = mode;
+        else {
+            _mode = mode;
+            _spi.dataMode(_fd, mode);
+        }
     };
     spi.bitOrder = function (order) {
         if (arguments.length < 1) return _order;
-        else _order = order;
+        else {
+            _order = order;
+            _spi.bitOrder(_fd, order);
+        }
     };
-    
-    
+
     function _transfer(w,r) {
         return _spi.transfer(_fd, _speed, _mode, _order, w, r);
     }

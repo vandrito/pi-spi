@@ -31,6 +31,38 @@ struct Baton {
     uint8_t buffer[0];      // allocated larger
 };
 
+Handle<Value> dataMode(const Arguments& args) {
+#if NODE_VERSION_AT_LEAST(0, 11, 0)
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+#else
+#define isolate
+    HandleScope scope;
+#endif
+    int fd = args[0]->ToInt32()->Value();
+    uint8_t mode = args[1]->ToUint32()->Value();
+    uv_mutex_lock(&spiAccess);
+    ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
+    uv_mutex_unlock(&spiAccess);
+    return scope.Close(Undefined());
+}
+
+Handle<Value> bitOrder(const Arguments& args) {
+#if NODE_VERSION_AT_LEAST(0, 11, 0)
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+#else
+#define isolate
+    HandleScope scope;
+#endif
+    int fd = args[0]->ToInt32()->Value();
+    uint8_t bitOrder = args[1]->ToUint32()->Value();
+    uv_mutex_lock(&spiAccess);
+    ret = ioctl(fd, SPI_IOC_WR_LSB_FIRST, &bitOrder);
+    uv_mutex_unlock(&spiAccess);
+    return scope.Close(Undefined());
+}
+
 Handle<Value> Transfer(const Arguments& args) {
 #if NODE_VERSION_AT_LEAST(0, 11, 0)
     Isolate* isolate = Isolate::GetCurrent();
@@ -41,13 +73,14 @@ Handle<Value> Transfer(const Arguments& args) {
 #endif
     
     // (fd, speed, mode, order, writebuf, readcount, cb)
+    /* perfs issues !!!
     assert(args.Length() == 6);
     assert(args[0]->IsNumber());
     assert(args[1]->IsNumber());
     assert(args[2]->IsNumber());
     assert(args[3]->IsNumber());
     assert(args[4]->IsNull() || node::Buffer::HasInstance(args[4]));
-    assert(args[5]->IsNumber());
+    assert(args[5]->IsNumber());*/
     
     uint32_t readcount = args[5]->ToUint32()->Value();
     
@@ -56,7 +89,7 @@ Handle<Value> Transfer(const Arguments& args) {
     if (args[4]->IsObject()) {
         Local<Object> writebuf = args[4]->ToObject();
         writelen = node::Buffer::Length(writebuf);
-        assert(writelen <= 0xffffffff /*std::numeric_limits<T>::max()*/);
+        // assert(writelen <= 0xffffffff /*std::numeric_limits<T>::max()*/);
         writedata = node::Buffer::Data(writebuf);
     } else {
         writelen = 0;
