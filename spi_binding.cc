@@ -39,6 +39,7 @@ Handle<Value> dataMode(const Arguments& args) {
 #define isolate
     HandleScope scope;
 #endif
+    int ret = 0;
     int fd = args[0]->ToInt32()->Value();
     uint8_t mode = args[1]->ToUint32()->Value();
     uv_mutex_lock(&spiAccess);
@@ -54,7 +55,8 @@ Handle<Value> bitOrder(const Arguments& args) {
 #else
 #define isolate
     HandleScope scope;
-#endif
+#endif    
+    int ret = 0;
     int fd = args[0]->ToInt32()->Value();
     uint8_t bitOrder = args[1]->ToUint32()->Value();
     uv_mutex_lock(&spiAccess);
@@ -111,10 +113,10 @@ Handle<Value> Transfer(const Arguments& args) {
     int ret = 0;
 #ifdef SPI_IOC_MESSAGE
     uv_mutex_lock(&spiAccess);
-    ret = ioctl(baton->fd, SPI_IOC_WR_MODE, &baton->mode);
+/*    ret = ioctl(baton->fd, SPI_IOC_WR_MODE, &baton->mode);
     if (ret != -1) {
         ret = ioctl(baton->fd, SPI_IOC_WR_LSB_FIRST, &baton->order);
-        if (ret != -1) {
+        if (ret != -1) {*/
             struct spi_ioc_transfer msg = {
                 /*.tx_buf = */ (uintptr_t)baton->buffer,
                 /*.rx_buf = */ (uintptr_t)baton->buffer,
@@ -128,8 +130,8 @@ Handle<Value> Transfer(const Arguments& args) {
                 /*.pad = */ 0,
             };
             ret = ioctl(baton->fd, SPI_IOC_MESSAGE(1), &msg);
-        }
-    }
+       /* }
+    }*/
     uv_mutex_unlock(&spiAccess);
 #else
 #warning "Building without SPI support"
