@@ -164,6 +164,14 @@ void init(Handle<Object> exports) {
     exports->Set(
         String::NewSymbol("transfer"),
         FunctionTemplate::New(Transfer)->GetFunction()
+    ); 
+    exports->Set(
+        String::NewSymbol("bitOrder"),
+        FunctionTemplate::New(bitOrder)->GetFunction()
+    );
+    exports->Set(
+        String::NewSymbol("dataMode"),
+        FunctionTemplate::New(dataMode)->GetFunction()
     );
 }
 
